@@ -26,7 +26,7 @@ namespace FinanceApi.Controllers
             return Ok(commentDto);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult?> GetById([FromRoute] int id)
         {
             var comment = await _commentRepo.GetByIdAsync(id);
@@ -38,20 +38,33 @@ namespace FinanceApi.Controllers
 
         }
 
-        [HttpPost("{stockId}")]
+        [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentDto commentDto)
         {
             if (!await _stockRepo.StockExist(stockId))
             {
                 return BadRequest("Stock not found");
             }
-            var commentModel = commentDto.ToCreateCommentDto(stockId);
+            var commentModel = commentDto.ToCommentFromCreate(stockId);
             await _commentRepo.CreateAsync(commentModel);
-            return CreatedAtAction(nameof(GetById), new { id = commentModel }, commentModel.ToCommentDto());
+            return CreatedAtAction(nameof(GetById), new { id = commentModel.Id }, commentModel.ToCommentDto());
         }
 
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateCommentRequestDto updateDto)
+        {
+            var comment = await _commentRepo.UpdateAsync(id, updateDto.ToCommentFromUpdate());
+            if (comment == null)
+            {
+                return NotFound("comment not found");
+            }
+            return Ok(comment.ToCommentDto());
+        }
+
+
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var stock = await _commentRepo.DeleteAsync(id);

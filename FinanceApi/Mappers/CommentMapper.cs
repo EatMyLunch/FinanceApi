@@ -17,13 +17,22 @@ namespace FinanceApi.Mappers
             };
         }
 
-        public static Comment ToCreateCommentDto(this CreateCommentDto commentDto, int stockId)
+        public static Comment ToCommentFromCreate(this CreateCommentDto commentDto, int stockId)
         {
             return new Comment
             {
                 Title = commentDto.Title,
                 Content = commentDto.Content,
                 StockId = stockId,
+            };
+        }
+
+        public static Comment ToCommentFromUpdate(this UpdateCommentRequestDto commentDto)
+        {
+            return new Comment
+            {
+                Title = commentDto.Title,
+                Content = commentDto.Content,
             };
         }
     }

@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FinanceApi.Dtos.Comment
+﻿namespace FinanceApi.Dtos.Comment
 {
-    public class CreateCommentDto
+    public class UpdateCommentRequestDto
     {
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
