@@ -41,6 +41,9 @@ namespace FinanceApi.Controllers
         [HttpPost("{stockId:int}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentDto commentDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (!await _stockRepo.StockExist(stockId))
             {
                 return BadRequest("Stock not found");
@@ -54,6 +57,9 @@ namespace FinanceApi.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateCommentRequestDto updateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var comment = await _commentRepo.UpdateAsync(id, updateDto.ToCommentFromUpdate());
             if (comment == null)
             {
@@ -67,6 +73,9 @@ namespace FinanceApi.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var stock = await _commentRepo.DeleteAsync(id);
             if (stock == null)
             {
