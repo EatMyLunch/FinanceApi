@@ -55,16 +55,16 @@ namespace FinanceApi.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateCommentRequestDto updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var comment = await _commentRepo.UpdateAsync(id, updateDto.ToCommentFromUpdate());
+            var comment = await _commentRepo.UpdateAsync(id, updateDto.ToCommentFromUpdate(id));
             if (comment == null)
             {
-                return NotFound("comment not found");
+                return NotFound("Comment not found");
             }
+
             return Ok(comment.ToCommentDto());
         }
 
