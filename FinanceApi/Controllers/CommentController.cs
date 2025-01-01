@@ -1,8 +1,10 @@
 ﻿using FinanceApi.Dtos.Comment;
 using FinanceApi.Extensions;
+using FinanceApi.Helpers;
 using FinanceApi.Interfaces;
 using FinanceApi.Mappers;
 using FinanceApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +28,10 @@ namespace FinanceApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [Authorize]
+        public async Task<IActionResult> GetAll([FromQuery] CommentQueryObject queryObject)
         {
-            var comments = await _commentRepo.GetAllAsync();
+            var comments = await _commentRepo.GetAllAsync(queryObject);
             var commentDto = comments.Select(c => c.ToCommentDto());
             return Ok(commentDto);
         }
