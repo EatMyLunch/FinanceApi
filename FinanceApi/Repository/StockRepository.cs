@@ -87,6 +87,11 @@ namespace FinanceApi.Repository
             return existingStock;
         }
 
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
+
         public async Task<bool> StockExist(int id)
         {
             return await _context.Stocks.AnyAsync(s => s.Id == id);
