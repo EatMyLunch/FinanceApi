@@ -3,6 +3,7 @@ using FinanceApi.Dtos.Stock;
 using FinanceApi.Helpers;
 using FinanceApi.Interfaces;
 using FinanceApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace FinanceApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
             var stocks = await _stockRepo.GetAllAsync(query);
