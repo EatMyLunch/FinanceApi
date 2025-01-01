@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceApi.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20250101044151_seed-role")]
-    partial class seedrole
+    [Migration("20250101114945_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,10 @@ namespace FinanceApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -114,9 +118,26 @@ namespace FinanceApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppUserId");
+
                     b.HasIndex("StockId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("FinanceApi.Models.Portfolio", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppUserId", "StockId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("Portfolios");
                 });
 
             modelBuilder.Entity("FinanceApi.Models.Stock", b =>
@@ -182,13 +203,13 @@ namespace FinanceApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ff665791-dca6-4233-a4f8-791c3b5e1f88",
+                            Id = "e1cc8d81-dfaa-440f-8b34-b7a0cc2e2520",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "24f35c21-75f0-48bb-ad96-f1a58e03b62a",
+                            Id = "4028e5fe-e15d-42a8-a30f-7cf57326cf46",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -302,9 +323,36 @@ namespace FinanceApi.Migrations
 
             modelBuilder.Entity("FinanceApi.Models.Comment", b =>
                 {
+                    b.HasOne("FinanceApi.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FinanceApi.Models.Stock", "Stock")
                         .WithMany("Comments")
                         .HasForeignKey("StockId");
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("FinanceApi.Models.Portfolio", b =>
+                {
+                    b.HasOne("FinanceApi.Models.AppUser", "AppUser")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FinanceApi.Models.Stock", "Stock")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
 
                     b.Navigation("Stock");
                 });
@@ -360,9 +408,16 @@ namespace FinanceApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FinanceApi.Models.AppUser", b =>
+                {
+                    b.Navigation("Portfolios");
+                });
+
             modelBuilder.Entity("FinanceApi.Models.Stock", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Portfolios");
                 });
 #pragma warning restore 612, 618
         }

@@ -95,6 +95,10 @@ namespace FinanceApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -110,6 +114,8 @@ namespace FinanceApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("StockId");
 
@@ -194,13 +200,13 @@ namespace FinanceApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a91295be-55a8-4805-bb1c-9660bfc8eb6c",
+                            Id = "e1cc8d81-dfaa-440f-8b34-b7a0cc2e2520",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "53327acf-fdad-4f03-b269-92a30cc61bff",
+                            Id = "4028e5fe-e15d-42a8-a30f-7cf57326cf46",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -314,9 +320,17 @@ namespace FinanceApi.Migrations
 
             modelBuilder.Entity("FinanceApi.Models.Comment", b =>
                 {
+                    b.HasOne("FinanceApi.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FinanceApi.Models.Stock", "Stock")
                         .WithMany("Comments")
                         .HasForeignKey("StockId");
+
+                    b.Navigation("AppUser");
 
                     b.Navigation("Stock");
                 });
